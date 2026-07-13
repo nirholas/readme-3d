@@ -1,4 +1,4 @@
-# readme-3d
+# readme-3d 
 
 **Put interactive, rotatable 3D models in your GitHub README.** No images, no video, no JavaScript - GitHub renders ASCII STL inside a markdown code fence as a live 3D viewer, and `readme-3d` turns any GLB, glTF, OBJ, or binary STL into a paste-ready block that fits GitHub's size limits.
 
