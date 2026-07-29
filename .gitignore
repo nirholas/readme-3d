@@ -1,3 +1,21 @@
 node_modules/
 *.log
 .DS_Store
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# npm packaging output
+*.tgz
+
+# Test / coverage output
+coverage/
+.nyc_output/
+
+# Editors / OS
+.idea/
+.vscode/sessions.json
+Thumbs.db
+*.swp
