@@ -4362,3 +4362,10 @@ This repo ships a [Claude Code skill](skills/3d-in-readme/SKILL.md) and [ready-m
 ## License
 
 All rights reserved. See [LICENSE](LICENSE).
+
+## Documentation
+
+Full documentation site: **https://nirholas.github.io/readme-3d/**
+
+- [Getting started](docs/getting-started.md) covers install and first run.
+- [Examples](docs/examples.md) has copy-paste snippets.
