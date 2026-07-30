@@ -14,6 +14,12 @@ node_modules/
 coverage/
 .nyc_output/
 
+# Jekyll build output for docs/ (the source stays tracked; Gemfile.lock too)
+_site/
+.jekyll-cache/
+.jekyll-metadata
+vendor/bundle/
+
 # Editors / OS
 .idea/
 .vscode/sessions.json

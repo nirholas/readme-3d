@@ -21,6 +21,8 @@ GitHub renders ASCII STL inside a ` ```stl ` fenced code block as an interactive
 
    If `data.status` is `"done"`, download `data.glb_url`. If `"pending"`, poll `GET https://three.ws/api/forge?job=<data.job>` every 5 s until `status` is `"done"` (allow ~2 min). Shape-first prompts work best: silhouette survives the monochrome STL render, textures do not.
 
+   If that route answers `504 lane_timeout`, fall back to the generic forge endpoint: `POST https://three.ws/api/forge` with the same body returns `{ job_id, status: "queued" }`, and `GET https://three.ws/api/forge?job=<job_id>` returns `{ status: "done", glb_url }` when it finishes.
+
 3. **Convert with a byte budget.** Check the target markdown file's current size first, leave headroom under GitHub's 512 KB render limit, and never spend more than ~60% of what remains:
 
    ```bash

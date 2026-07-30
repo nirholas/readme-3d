@@ -21,14 +21,47 @@ async function getIO() {
   return ioPromise;
 }
 
+/** First 4 bytes of a GLB container: the ASCII magic "glTF", little-endian. */
+const GLB_MAGIC = 0x46546c67;
+
+function isGlb(bytes) {
+  if (bytes.byteLength < 4) return false;
+  return (
+    new DataView(bytes.buffer, bytes.byteOffset, 4).getUint32(0, true) === GLB_MAGIC
+  );
+}
+
 /**
- * Load a GLB/glTF and return its triangles in world space (still Y-up).
+ * Read either container into a Document.
+ *
+ * A path is preferred: NodeIO resolves a `.gltf` file's external `.bin` and
+ * image URIs relative to it. Raw bytes still work for GLB and for a
+ * self-contained `.gltf` whose buffers are data URIs.
+ */
+async function readDocument(io, source) {
+  if (typeof source === 'string') return io.read(source);
+  const bytes = source instanceof Uint8Array ? source : new Uint8Array(source);
+  if (isGlb(bytes)) return io.readBinary(bytes);
+  let json;
+  try {
+    json = JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    throw new Error('not a glTF file: neither a GLB container nor valid glTF JSON');
+  }
+  return io.readJSON({ json, resources: {} });
+}
+
+/**
+ * Load a GLB or glTF and return its triangles in world space (still Y-up).
  * Every TRIANGLES primitive of every mesh in every scene is included, with
  * node transforms baked in.
+ *
+ * `source` is a file path (preferred: resolves external `.bin`/textures) or the
+ * file's bytes.
  */
-export async function loadGltfTriangles(bytes) {
+export async function loadGltfTriangles(source) {
   const io = await getIO();
-  const doc = await io.readBinary(new Uint8Array(bytes));
+  const doc = await readDocument(io, source);
   const triangles = [];
   for (const scene of doc.getRoot().listScenes()) {
     scene.traverse((node) => {

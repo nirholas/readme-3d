@@ -5,6 +5,13 @@ description: "Convert GLB, glTF, OBJ, and STL files into the ASCII STL markdown 
 
 # 3D in markdown, the easy way
 
+> **Hosting note.** This site is not published at the moment: `https://nirholas.github.io/readme-3d/`
+> returns 404 because GitHub Pages is not enabled for the repository. Read these pages in the
+> repository itself, at [github.com/nirholas/readme-3d](https://github.com/nirholas/readme-3d),
+> until Pages (or another host) is switched on. To build and serve it anywhere:
+> `bundle install && bundle exec jekyll build --source docs --destination _site`
+> writes the static site to `_site/`.
+
 GitHub renders ASCII STL inside a markdown code fence as a **live, draggable 3D viewer** - in READMEs, issues, pull requests, discussions, and gists. No JavaScript, no images, no plugins.
 
 `readme-3d` is the toolchain around that feature: it converts real models (GLB, glTF, OBJ, binary STL) into paste-ready blocks, simplifies meshes to fit GitHub's 512 KB markdown limit, and size-checks your files so they never silently stop rendering.

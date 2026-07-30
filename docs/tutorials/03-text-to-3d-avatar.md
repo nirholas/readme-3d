@@ -18,13 +18,24 @@ curl -s -X POST https://three.ws/api/v1/ai/text-to-3d \
 Generation takes up to a minute or two. When it completes inside the request window you get the model directly:
 
 ```json
-{ "data": { "status": "done", "glb_url": "https://cdn.three.ws/forge/anon/<id>.glb", "viewer_url": "..." } }
+{ "data": { "status": "done", "glb_url": "https://pub-2534e921bf9c4314addcd4d8a6e98b7b.r2.dev/forge/anon/<id>.glb", "viewer_url": "..." } }
 ```
 
 If it returns `"status": "pending"` instead, poll the included `poll_url` (`GET https://three.ws/api/forge?job=<job>`) every few seconds until `status` is `"done"`. Then download:
 
 ```bash
 curl -sL -o mascot.glb "<glb_url from the response>"
+```
+
+If the versioned route answers `504 lane_timeout` (its NVIDIA lane is busy), submit the
+same prompt to the generic forge endpoint instead and poll it the same way:
+
+```bash
+curl -s -X POST https://three.ws/api/forge -H 'content-type: application/json' \
+ -d '{"prompt": "a friendly humanoid robot mascot standing upright, full body"}'
+# -> { "job_id": "...", "status": "queued" }
+curl -s --get --data-urlencode "job=<job_id>" https://three.ws/api/forge
+# -> { "status": "done", "glb_url": "..." }
 ```
 
 Prompt tips for models that survive the monochrome STL treatment:
@@ -48,7 +59,7 @@ This repo ships a [Claude Code skill](https://github.com/nirholas/readme-3d/blob
 
 > "Generate a 3D wizard mascot and add it to my README"
 
-does generate → download → convert → budget-check → embed in one go. three.ws also exposes the generator as an MCP tool (`forge_free`) for any MCP-capable agent - see [three.ws/mcp](https://three.ws/mcp).
+does generate → download → convert → budget-check → embed in one go. three.ws also exposes the generator as an MCP tool (`forge_free`) for any MCP-capable agent - see the [three.ws MCP docs](https://three.ws/docs/mcp).
 
 ## Real-world example
 

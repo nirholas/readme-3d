@@ -12,6 +12,7 @@ import {
   toMarkdown,
   checkMarkdownFile,
   parseByteSize,
+  loadGltfTriangles,
 } from '../src/index.js';
 import { writeAsciiStl } from '../src/geometry.js';
 import { cubeTriangles, gridTriangles } from './helpers.js';
@@ -62,6 +63,28 @@ test('convert() GLB end-to-end: real glTF in, GitHub STL out', async () => {
   assert.ok(result.stl.startsWith('solid cube'));
   // node scale [2,2,2] baked in, then normalized to 100 units and grounded
   assert.ok(result.stl.includes('vertex 50.00 50.00 100.00'));
+});
+
+test('convert() reads .gltf JSON with an external .bin, not just GLB', async () => {
+  const dir = await tmp();
+  const glb = join(dir, 'cube.glb');
+  await writeCubeGlb(glb);
+  // Re-serialize as the two-file .gltf form (JSON + sibling cube.bin).
+  const io = new NodeIO();
+  await io.write(join(dir, 'cube.gltf'), await io.read(glb));
+
+  const result = await convert(join(dir, 'cube.gltf'), { name: 'cube' });
+  assert.equal(result.facets, 12);
+  assert.ok(result.stl.startsWith('solid cube'));
+  assert.ok(result.stl.includes('vertex 50.00 50.00 100.00'));
+});
+
+test('loadGltfTriangles accepts GLB bytes as well as a path', async () => {
+  const dir = await tmp();
+  const glb = join(dir, 'cube.glb');
+  await writeCubeGlb(glb);
+  const tris = await loadGltfTriangles(await readFile(glb));
+  assert.equal(tris.length, 12);
 });
 
 test('convert() honors a byte budget', async () => {

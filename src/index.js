@@ -40,20 +40,19 @@ export async function loadTriangles(path, { up } = {}) {
   if (!['.glb', '.gltf', '.stl', '.ast', '.obj'].includes(ext)) {
     throw new Error(`unsupported input format: ${ext || path} (use .glb, .gltf, .stl, .ast, or .obj)`);
   }
-  const bytes = await readFile(path);
   let triangles;
   let sourceUp;
   if (ext === '.glb' || ext === '.gltf') {
-    triangles = await loadGltfTriangles(bytes);
+    // Pass the path, not the bytes: a .gltf's buffers and images are usually
+    // sibling files, and only the path lets NodeIO resolve them.
+    triangles = await loadGltfTriangles(path);
     sourceUp = up ?? 'y';
   } else if (ext === '.stl' || ext === '.ast') {
-    triangles = parseStl(bytes);
+    triangles = parseStl(await readFile(path));
     sourceUp = up ?? 'z';
-  } else if (ext === '.obj') {
-    triangles = parseObj(bytes.toString('utf8'));
-    sourceUp = up ?? 'y';
   } else {
-    throw new Error(`unsupported input format: ${ext || path} (use .glb, .gltf, .stl, .ast, or .obj)`);
+    triangles = parseObj(await readFile(path, 'utf8'));
+    sourceUp = up ?? 'y';
   }
   if (!triangles.length) throw new Error(`no triangles found in ${path}`);
   return sourceUp === 'y' ? yUpToZUp(triangles) : triangles;

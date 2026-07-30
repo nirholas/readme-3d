@@ -4301,12 +4301,21 @@ GitHub renders markdown files up to **512 KB** - beyond that the whole file disp
 
 ## The full text-to-README pipeline
 
-You don't even need a model. [three.ws Forge](https://three.ws/forge) generates a textured GLB from a text prompt, free, no account:
+You don't even need a model. [three.ws Forge](https://three.ws/forge) generates a textured GLB from a text prompt, free, no account. Generation is asynchronous: the submit call returns a `job_id`, and you poll the same endpoint until `status` is `done`.
 
 ```bash
-curl -s -X POST https://three.ws/api/forge -H 'content-type: application/json' \
- -d '{"prompt":"a friendly robot mascot, full body"}'   # → { glbUrl }
-curl -sL -o mascot.glb "<glbUrl>"
+# 1. submit the prompt -> { "job_id": "...", "status": "queued" }
+JOB=$(curl -s -X POST https://three.ws/api/forge -H 'content-type: application/json' \
+  -d '{"prompt":"a friendly robot mascot, full body"}' \
+  | node -e 'process.stdin.on("data",d=>process.stdout.write(JSON.parse(d).job_id))')
+
+# 2. poll until done -> { "status": "done", "glb_url": "..." } (a minute or two)
+until GLB=$(curl -s --get --data-urlencode "job=$JOB" https://three.ws/api/forge \
+  | node -e 'process.stdin.on("data",d=>{const j=JSON.parse(d);if(j.status==="done")process.stdout.write(j.glb_url)})') \
+  && [ -n "$GLB" ]; do sleep 5; done
+
+# 3. download and embed
+curl -sL -o mascot.glb "$GLB"
 npx readme-3d mascot.glb --budget 150kb >> README.md
 ```
 
