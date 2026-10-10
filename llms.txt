@@ -1,0 +1,19 @@
+# readme-3d
+
+> Put interactive, rotatable 3D models in your GitHub README. Converts GLB, glTF, OBJ, and binary STL into the ASCII STL markdown blocks GitHub renders natively - with mesh simplification to fit the 512 KB markdown budget.
+
+readme-3d is a JavaScript library from three.ws. Install: `npx -y readme-3d`.
+
+## Docs
+
+- [README](https://github.com/nirholas/readme-3d/blob/main/README.md): install, configuration, full reference
+- [Documentation site](https://nirholas.github.io/readme-3d/): the README as a web page
+- [Full text for LLMs](https://nirholas.github.io/readme-3d/llms-full.txt): README inlined
+- [AGENTS.md](https://github.com/nirholas/readme-3d/blob/main/AGENTS.md): guidance for coding agents
+
+## Project
+
+- [Source](https://github.com/nirholas/readme-3d)
+- [npm](https://www.npmjs.com/package/readme-3d)
+- [three.ws](https://three.ws): the platform this is part of
+- [Issues](https://github.com/nirholas/readme-3d/issues)

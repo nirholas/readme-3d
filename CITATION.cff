@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: "readme-3d"
+abstract: "Put interactive, rotatable 3D models in your GitHub README. Converts GLB, glTF, OBJ, and binary STL into the ASCII STL markdown blocks GitHub renders natively - with mesh simplification to fit the 512 KB markdown budget."
+version: 0.1.1
+license: Apache-2.0
+repository-code: "https://github.com/nirholas/readme-3d"
+url: "https://three.ws"
+authors:
+  - name: three.ws
+    website: "https://three.ws"
